@@ -1,0 +1,13 @@
+{
+  "name": "ts-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/lodash.get": "^4.4.6",
+    "idx": "^2.5.6",
+    "lodash.get": "^4.4.2",
+    "ts-toolbelt": "^2.1.5",
+    "typescript": "^3.5.2"
+  }
+}
