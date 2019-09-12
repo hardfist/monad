@@ -1,14 +1,22 @@
-import { compose, pipe } from 'lodash/fp'
+import { pipe} from 'lodash/fp'
+type T = number;
+type M = number[];
 
-type f<T> = (x:T) => T[];
-
-const unit = <T>(x:T) => [x];
-const bind = <T>(f:f<T>) => (list: T[]) => {
-  return list.reduce((x,current) => [...x,...f(current)], [] as T[]);
+function pure(x:T){
+  return [x];
 }
-
-const repeat = <T>(x:T) => [x,x,x];
-
-console.log(compose(bind(repeat),bind(repeat),unit)(10));
-
-console.log(pipe(unit, bind(repeat))(20));
+function bind(f: typeof pure){
+  return (xs: M) => {
+    let result: T[] = [];
+    for(const x of xs){
+      result = [...result, ...f(x)]
+    }
+    return result;
+  }
+}
+function repeat(n:number){
+  return function (x: number) {
+    return [x,x,x,];
+  }
+}
+console.log(pipe(pure, bind(repeat(2)),bind(repeat(3)))(2))

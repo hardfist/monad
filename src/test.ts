@@ -1,45 +1,22 @@
 import { pipe} from 'lodash/fp'
-type T = {
-  [key:string]: any;
-};
-type M = null | T;
-function pure(x:T): M{
-  return x;
-}
-function prop(key: string){
-  return (x:T) => {
-    if(x[key] !== undefined){
-      return x[key]
-    }else{
-      return null;
-    }
-  }
-}
+type T = number;
+type M = number[];
 
+function pure(x:T){
+  return [x];
+}
 function bind(f: typeof pure){
-  return (x:M) =>  {
-    if(x === null){
-      return null;
-    }else{
-      return f(x);
+  return (xs: M) => {
+    let result: T[] = [];
+    for(const x of xs){
+      result = [...result, ...f(x)]
     }
+    return result;
   }
 }
-
-console.log(pipe(pure, bind(prop('name')), bind(prop('age')))({
-  name: {
-    age: 20
+function repeat(n:number){
+  return function (x: number) {
+    return [x,x,x,];
   }
-}))
-
-console.log(pipe(pure, bind(prop('name')), bind(prop('age2')))({
-  name: {
-    age: 20
-  }
-}))
-
-console.log(pipe(pure, bind(prop('name2')), bind(prop('age')))({
-  name: {
-    age: 20
-  }
-}))
+}
+console.log(pipe(pure, bind(repeat(2)),bind(repeat(3)))(2))

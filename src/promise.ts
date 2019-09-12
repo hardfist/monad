@@ -17,4 +17,5 @@ const bind = <T >(f:f<T>) => (x: Promise<T>) => {
 
 
 
+
 pipe(unit, bind(delay(1000)), bind(delay(2000)), bind(delay(3000)))('sss')
