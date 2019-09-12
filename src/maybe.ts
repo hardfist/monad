@@ -1,46 +1,45 @@
-
-import { pipe } from 'lodash/fp';
-import * as _ from 'lodash';
+import { pipe} from 'lodash/fp'
 type T = {
-  [key: string]: any
+  [key:string]: any;
+};
+type M = null | T;
+function pure(x:T): M{
+  return x;
 }
-class Maybe {
-  constructor(public _value: T | null, ) {
-
-  }
-  static just(x: T) {
-    return new Maybe(x);
-  }
-  static none() {
-    return new Maybe(null);
-  }
-  is_none() {
-    return this._value === null
-  }
-}
-function unit(x: T) {
-  return new Maybe(x);
-}
-function bind(f: typeof unit) {
-  return (x: Maybe) => {
-    if (x._value) {
-      return f(x._value);
-    } else {
-      return Maybe.none();
+function prop(key: string){
+  return (x:T) => {
+    if(x[key] !== undefined){
+      return x[key]
+    }else{
+      return null;
     }
   }
 }
-const props = (key: string) => (x: T) => {
-  if (x[key]) {
-    return Maybe.just(x[key]);
-  } else {
-    return Maybe.none();
+
+function bind(f: typeof pure){
+  return (x:M) =>  {
+    if(x === null){
+      return null;
+    }else{
+      return f(x);
+    }
   }
 }
-console.log(pipe(unit, bind(props('name')), bind(props('age')))({
-  name:{
+
+console.log(pipe(pure, bind(prop('name')), bind(prop('age')))({
+  name: {
     age: 20
   }
-}));
+}))
 
+console.log(pipe(pure, bind(prop('name')), bind(prop('age2')))({
+  name: {
+    age: 20
+  }
+}))
 
+console.log(pipe(pure, bind(prop('name2')), bind(prop('age')))({
+  name: {
+    age: 20
+  }
+}))

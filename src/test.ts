@@ -1,22 +1,45 @@
 import { pipe} from 'lodash/fp'
-type M = [number,string];
-function double(x:number){
-  return [2*x, 'double called']
+type T = {
+  [key:string]: any;
+};
+type M = null | T;
+function pure(x:T): M{
+  return x;
 }
-function sin(x:number){
-  return [Math.sin(x), 'sin called']
-}
-
-function pure(x:number){
-  return [x, '']
-}
-
-function bind(f: typeof pure){
-  return (m:M) => {
-    const [x, s1] = m;
-    const [y, s2] = f(x);
-    return [y, s1+s2];
+function prop(key: string){
+  return (x:T) => {
+    if(x[key] !== undefined){
+      return x[key]
+    }else{
+      return null;
+    }
   }
 }
 
-console.log(pipe(pure, bind(sin), bind(double))(123));
+function bind(f: typeof pure){
+  return (x:M) =>  {
+    if(x === null){
+      return null;
+    }else{
+      return f(x);
+    }
+  }
+}
+
+console.log(pipe(pure, bind(prop('name')), bind(prop('age')))({
+  name: {
+    age: 20
+  }
+}))
+
+console.log(pipe(pure, bind(prop('name')), bind(prop('age2')))({
+  name: {
+    age: 20
+  }
+}))
+
+console.log(pipe(pure, bind(prop('name2')), bind(prop('age')))({
+  name: {
+    age: 20
+  }
+}))
